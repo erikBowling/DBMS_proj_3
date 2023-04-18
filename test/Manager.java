@@ -2,8 +2,9 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -13,6 +14,7 @@ public class Manager {
 
 		String url = "jdbc:mysql://localhost:3306/university";
 		Scanner inputStream = new Scanner(System.in);
+		Connection DBConnection = null;
 
 		System.out.println("\t\t** WELCOME **");
 
@@ -20,7 +22,7 @@ public class Manager {
 
 		//Connection DBConnection = establishConnection(url, inputStream);
 		try{
-			Connection DBConnection = DriverManager.getConnection(url, "root", "db123");
+			DBConnection = DriverManager.getConnection(url, "root", "db123");
 		}catch(SQLException e){
 			System.out.println("bad connection");
 			System.exit(1);
@@ -44,19 +46,50 @@ public class Manager {
 				System.out.println("Please enter a number between 0 and 5.");
 		}
 
+		String query;
 		switch(userChoice){
 			case 0:
 				System.out.println("\t** Goodbye **");
 				System.exit(0);
 				break;
 			case 1:
+				query = "SELECT * FROM department;";
+				try{
+					PreparedStatement state = DBConnection.prepareStatement(query);
+					ResultSet rs = state.executeQuery();
+					ResultSetMetaData rsmd = rs.getMetaData();
+					int columnCount = rsmd.getColumnCount();
+					System.out.println(columnCount);
+					while(rs.next()){
+						System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t\t");
+					}
+				} catch(SQLException e){
+					System.out.println(e);
+				}
 				break;
+
 			case 2:
+				query = "SELECT * FROM course;";
+				try{
+					PreparedStatement state = DBConnection.prepareStatement(query);
+					ResultSet rs = state.executeQuery();
+					ResultSetMetaData rsmd = rs.getMetaData();
+					int columnCount = rsmd.getColumnCount();
+					System.out.println(columnCount);
+					while(rs.next()){
+						System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t\t");
+					}
+				} catch(SQLException e){
+					System.out.println(e);
+				}
 				break;
+
 			case 3:
 				break;
+
 			case 4:
 				break;
+
 			case 5:
 				break;
 		}
