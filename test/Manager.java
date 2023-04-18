@@ -1,55 +1,119 @@
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Manager {
 
 	public static void main(String[] args) {
-		// try {
-		// 	/**
-		// 	 * Returns the Class object associated with the class or interface with the
-		// 	 * given string name. Given the fully qualified name for a class or interface
-		// 	 * this method attempts to locate, load, and link the class or interface.
-		// 	 * https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html
-		// 	 */
-		// 	Class.forName("com.mysql.cj.jdbc.Driver");
-		// 	try (Connection conn = DriverManager
-		// 			.getConnection("jdbc:mysql://localhost:3306/university?user=root&password=db123");
-		// 			Statement stmt = conn.createStatement();) {
-		// 		try {
-		// 			stmt.executeUpdate("insert into instructor values ('24', 'Green', 'Finance', 98000)");
 
-		// 		} catch (SQLException sqle) {
-		// 			System.out.println("Could not insert tuple. " + sqle);
-		// 		}
+		String url = "jdbc:mysql://localhost:3306/university";
+		Scanner inputStream = new Scanner(System.in);
 
-		// 		ResultSet rset = stmt
-		// 				.executeQuery("select dept_name, avg(salary) as att2 from instructor group by dept_name");
-		// 		while (rset.next()) {
-		// 			System.out.println(rset.getString("dept_name") + " " + rset.getFloat("att2"));
-		// 		}	
-				
-		// 	} catch (SQLException e) {
-		// 		e.printStackTrace();
-		// 	}
-		// } catch (ClassNotFoundException e) {
-		// 	e.printStackTrace();
-		// }
+		System.out.println("\t\t** WELCOME **");
 
-		Scanner scan = new Scanner(System.in);
-		String userInput;
+		printInstructions();
 
-		System.out.println("Welcome to Erik's Project 3 for DBMS! To start, please login to the DB.");
-		System.out.println("What is your username?");
-		userInput = scan.next();
-		if (userInput instanceof String);
-	}	
+		//Connection DBConnection = establishConnection(url, inputStream);
+		try{
+			Connection DBConnection = DriverManager.getConnection(url, "root", "db123");
+		}catch(SQLException e){
+			System.out.println("bad connection");
+			System.exit(1);
+		}
+
+		printMenu();
+
+		System.out.println("Please enter in your choice. (0-5)");
+		int userChoice = -1;
+
+		// Loop while the user choice isn't valid
+		while(userChoice < 0 || userChoice > 5){
+			try{
+		 		userChoice = inputStream.nextInt();
+			}catch(InputMismatchException e){
+				System.out.println("That's not a valid input. Please enter an integer between 0 and 5.");
+				inputStream.nextLine(); // Clear the buffer in our scanner in case of wrong input
+			}
+
+			if(userChoice < 0 || userChoice > 5)
+				System.out.println("Please enter a number between 0 and 5.");
+		}
+
+		switch(userChoice){
+			case 0:
+				System.out.println("\t** Goodbye **");
+				System.exit(0);
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+		}
+
+		// Finish the program by closing out the inputStream
+		inputStream.close();
+	}
+
+
+	private static void printMenu(){
+		System.out.println("\t\t*** MENU ***");
+		System.out.println("1.) Display all information about departments.");
+		System.out.println("2.) Display all information about courses.");
+		System.out.println("3.) Add a course");
+		System.out.println("4.) Delete course");
+		System.out.println("5.) Update a course");
+		System.out.println("0.) Exit program\n");
+	}
+
+	private static void printInstructions(){
+		System.out.println("instruction");
+
+	}
+
+
+	private static Connection establishConnection(String url, Scanner inputStream){
+		Boolean connectedStatus = false; // Used to loop. Set to true upon successful connection
+		Connection DBConnection = null; // DB connection to be returned
+
+		System.out.print("** Please enter in your username and password. Enter in the empty string for username to exit. **\n");
+
+		// Loop is used to create the connection to the DB. If the user enters nothing for either username or password
+		// the program exits
+		while(!connectedStatus){
+			// Take in the username
+			System.out.println("Username: ");
+			String username = inputStream.nextLine();
+			if(username.isEmpty()){
+				inputStream.close();
+				System.exit(0);
+			}
+			// Take in the password
+			System.out.println("Password: ");
+			String password = inputStream.nextLine();
+
+			// Attempt to make connection. If no connection made, print the error and loop back around
+			try {
+				DBConnection = DriverManager.getConnection(url, username, password);
+				System.out.println("Database connected!");
+				connectedStatus = true;
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		}
+
+		return DBConnection;
+	}
 }
 
 
