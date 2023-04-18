@@ -53,19 +53,7 @@ public class Manager {
 				System.exit(0);
 				break;
 			case 1:
-				query = "SELECT * FROM department;";
-				try{
-					PreparedStatement state = DBConnection.prepareStatement(query);
-					ResultSet rs = state.executeQuery();
-					ResultSetMetaData rsmd = rs.getMetaData();
-					int columnCount = rsmd.getColumnCount();
-					System.out.println(columnCount);
-					while(rs.next()){
-						System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t\t");
-					}
-				} catch(SQLException e){
-					System.out.println(e);
-				}
+				
 				break;
 
 			case 2:
@@ -76,10 +64,16 @@ public class Manager {
 					ResultSetMetaData rsmd = rs.getMetaData();
 					int columnCount = rsmd.getColumnCount();
 					System.out.println(columnCount);
+
 					while(rs.next()){
-						System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t\t");
+						String output = "";
+						for(int i = 1; i <= columnCount; i++){
+							output+="\t\t" + rs.getString(i); 
+
+						}
+						System.out.println(output);
 					}
-				} catch(SQLException e){
+				}catch(SQLException e){
 					System.out.println(e);
 				}
 				break;
@@ -146,6 +140,22 @@ public class Manager {
 		}
 
 		return DBConnection;
+	}
+
+	private static void displayDepartment(){
+		query = "SELECT * FROM department;";
+		try{
+			PreparedStatement state = DBConnection.prepareStatement(query);
+			ResultSet rs = state.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			System.out.println(columnCount);
+			while(rs.next()){
+				System.out.println(rs.getString(1) + "\t\t" + rs.getString(2) + "\t\t");
+			}
+		} catch(SQLException e){
+			System.out.println(e);
+		}
 	}
 }
 
